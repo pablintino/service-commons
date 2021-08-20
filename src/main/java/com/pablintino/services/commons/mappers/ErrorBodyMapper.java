@@ -1,6 +1,7 @@
 package com.pablintino.services.commons.mappers;
 
 import com.pablintino.services.commons.exceptions.GenericHttpServiceException;
+import com.pablintino.services.commons.exceptions.ValidationHttpServiceException;
 import com.pablintino.services.commons.responses.HttpErrorBody;
 import com.pablintino.services.commons.responses.ValidationErrorBody;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -38,7 +39,7 @@ public class ErrorBodyMapper {
 
     public HttpErrorBody mapFromException(Exception exception){
         HttpErrorBody body = new HttpErrorBody();
-        body.setErrorMessage(exception.getMessage());
+        body.setErrorMessage(ExceptionUtils.getRootCause(exception).getMessage());
         body.setTimestamp(Instant.now().getEpochSecond());
         if(debugMode){
             body.setStackTrace(ExceptionUtils.getStackTrace(exception));
@@ -59,6 +60,12 @@ public class ErrorBodyMapper {
     public ValidationErrorBody mapFromValidationException(Exception exception, Map<String, String> fieldErrors){
         ValidationErrorBody body = new ValidationErrorBody(mapFromException(exception));
         body.setErrors(fieldErrors);
+        return body;
+    }
+
+    public ValidationErrorBody mapFromValidationException(ValidationHttpServiceException exception, HttpServletRequest request){
+        ValidationErrorBody body = new ValidationErrorBody(mapFromException(exception, request));
+        body.setErrors(exception.getErrors());
         return body;
     }
 }

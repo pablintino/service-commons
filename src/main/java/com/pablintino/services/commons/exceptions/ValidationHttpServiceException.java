@@ -11,12 +11,12 @@ public class ValidationHttpServiceException extends GenericHttpServiceException 
     private final Map<String, String> errors;
 
     public ValidationHttpServiceException(String message){
-        super(message);
+        super(message, 400);
         this.errors = Collections.emptyMap();
     }
 
     public ValidationHttpServiceException(String message, Map<String, String> errors){
-        super(message);
+        super(message, 400);
         this.errors = errors;
     }
 
@@ -31,7 +31,7 @@ public class ValidationHttpServiceException extends GenericHttpServiceException 
     }
 
     public ValidationHttpServiceException(String message, Throwable ex){
-        super(message, ex);
+        super(message, 400, ex);
         this.errors = Collections.emptyMap();
     }
 
